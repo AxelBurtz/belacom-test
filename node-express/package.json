@@ -1,11 +1,16 @@
 {
-  "name": "express",
+  "name": "express-api",
   "version": "1.0.0",
-  "description": "Express RREST API",
+  "description": "Express API REST",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Me",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "md5": "^2.3.0",
+    "sqlite3": "^5.0.2"
+  }
 }

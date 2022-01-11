@@ -1,20 +1,19 @@
 const sqlite3 = require('sqlite3');
 const express = require("express");
 var app = express();
+const cors = require("cors");
 
-const HTTP_PORT = 8000
-app.listen(HTTP_PORT, () => {
-  console.log("Server is listening on port " + HTTP_PORT);
-});
+app.use(cors());
+app.use(express.json());
 
-const db = new sqlite3.Database('./emp_database.db', (err) => {
+// create db
+const db = new sqlite3.Database('./database.db', (err) => {
   if (err) {
-    console.error("Erro opening database " + err.message);
+    console.error("Error opening database " + err.message);
   } else {
 
-    // create db
-    db.run('CREATE TABLE employees( \
-            employee_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+    db.run('CREATE TABLE customers( \
+            customer_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             last_name NVARCHAR(20)  NOT NULL,\
             first_name NVARCHAR(20)  NOT NULL,\
             title NVARCHAR(20),\
@@ -24,7 +23,7 @@ const db = new sqlite3.Database('./emp_database.db', (err) => {
         console.log("Table already exists.");
       }
       // example and insert into db
-      let insert = 'INSERT INTO employees (last_name, first_name, title, age) VALUES (?,?,?,?)';
+      let insert = 'INSERT INTO customers (last_name, first_name, title, age) VALUES (?,?,?,?)';
       db.run(insert, ["Axel", "Burtz", "developeur",27 ]);
       db.run(insert, ["Jack", "nicholson", "CEO",84 ]);
       db.run(insert, ["Emma", "Watson", "CFO", 31 ]);
@@ -33,9 +32,9 @@ const db = new sqlite3.Database('./emp_database.db', (err) => {
 });
 
 // method show
-app.get("/employees/:id", (req, res, next) => {
+app.get("/customers/:id", (req, res, next) => {
   var params = [req.params.id]
-  db.get("SELECT * FROM employees where employee_id = ?", [req.params.id], (err, row) => {
+  db.get("SELECT * FROM customers where customer_id = ?", [req.params.id], (err, row) => {
     if (err) {
       res.status(400).json({ "error": err.message });
       return;
@@ -45,8 +44,8 @@ app.get("/employees/:id", (req, res, next) => {
 });
 
 // method all
-app.get("/employees", (req, res, next) => {
-  db.all("SELECT * FROM employees", [], (err, rows) => {
+app.get("/customers", (req, res, next) => {
+  db.all("SELECT * FROM customers", [], (err, rows) => {
     if (err) {
       res.status(400).json({ "error": err.message });
       return;
@@ -56,26 +55,31 @@ app.get("/employees", (req, res, next) => {
 });
 
 // method create
-app.post("/employees/", (req, res, next) => {
-  var reqBody = req.body;
-  db.run("INSERT INTO employees (last_name, first_name, title, age) VALUES (?,?,?,?)",
-    [reqBody.last_name, reqBody.first_name, reqBody.title, reqBody.age],
+app.post("/create/", (req, res, next) => {
+
+  const last_name = req.body.last_name
+  const first_name = req.body.first_name
+  const title = req.body.title
+  const age = req.body.age
+
+  db.run("INSERT INTO customers (last_name, first_name, title, age) VALUES (?,?,?,?)",
+    [req.body.last_name, req.body.first_name, req.body.title, req.body.age],
     function (err, result) {
       if (err) {
         res.status(400).json({ "error": err.message })
         return;
       }
       res.status(201).json({
-        "employee_id": this.lastID
+        "customer_id": this.lastID
       })
     });
 });
 
 // method update
-app.patch("/employees/", (req, res, next) => {
+app.patch("/customers/", (req, res, next) => {
   var reqBody = req.body;
-  db.run(`UPDATE employees set last_name = ?, first_name = ?, title = ?, age = ? WHERE employee_id = ?`,
-    [reqBody.last_name, reqBody.first_name, reqBody.title, reqBody.age, reqBody.employee_id],
+  db.run(`UPDATE customers set last_name = ?, first_name = ?, title = ?, age = ? WHERE customer_id = ?`,
+    [reqBody.last_name, reqBody.first_name, reqBody.title, reqBody.age, reqBody.customer_id],
     function (err, result) {
       if (err) {
         res.status(400).json({ "error": res.message })
@@ -86,7 +90,7 @@ app.patch("/employees/", (req, res, next) => {
 });
 
 // method delete
-app.delete("/employees/:id", (req, res, next) => {
+app.delete("/customers/:id", (req, res, next) => {
   db.run(`DELETE FROM user WHERE id = ?`,
     req.params.id,
     function (err, result) {
@@ -96,4 +100,10 @@ app.delete("/employees/:id", (req, res, next) => {
       }
       res.status(200).json({ deletedID: this.changes })
     });
+});
+
+
+const HTTP_PORT = 8000
+app.listen(HTTP_PORT, () => {
+  console.log("Server is listening on port " + HTTP_PORT);
 });

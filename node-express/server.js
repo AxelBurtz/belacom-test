@@ -13,7 +13,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
   if (err) {
     console.error("Error opening database " + err.message);
   } else {
-
+    // creation of the table for sqlite3
     db.run('CREATE TABLE customers( \
             id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             last_name NVARCHAR(20)  NOT NULL,\
@@ -33,9 +33,8 @@ const db = new sqlite3.Database('./database.db', (err) => {
   }
 });
 
-// method show
+// route show
 app.get("/customers/:id", (req, res, next) => {
-  var params = [req.params.id]
   db.get("SELECT * FROM customers where id = ?", [req.params.id], (err, row) => {
     if (err) {
       res.status(400).json({ "error": err.message });
@@ -45,7 +44,7 @@ app.get("/customers/:id", (req, res, next) => {
   });
 });
 
-// method all
+// route all
 app.get("/customers", (req, res, next) => {
   db.all("SELECT * FROM customers", [], (err, rows) => {
     if (err) {
@@ -56,7 +55,7 @@ app.get("/customers", (req, res, next) => {
   });
 });
 
-// method create
+// route create
 app.post("/create/", (req, res, next) => {
   db.run("INSERT INTO customers (last_name, first_name, title, age) VALUES (?,?,?,?)",
     [req.body.last_name, req.body.first_name, req.body.title, req.body.age],
@@ -71,8 +70,8 @@ app.post("/create/", (req, res, next) => {
     });
 });
 
-// method update
-app.patch("/update", (req, res, next) => {
+// route update
+app.put("/update", (req, res, next) => {
   db.run(`UPDATE customers SET last_name = ?, first_name = ?, title = ?, age = ? WHERE id = ?`,
     [req.body.last_name, req.body.first_name, req.body.title, req.body.age, req.body.id],
     function (err, result) {
@@ -84,7 +83,7 @@ app.patch("/update", (req, res, next) => {
     });
 });
 
-// method delete
+// route delete
 app.delete("/delete/:id", (req, res, next) => {
   const id = req.params.id
   db.run(`DELETE FROM customers WHERE id = ?`,
@@ -98,7 +97,7 @@ app.delete("/delete/:id", (req, res, next) => {
     });
 });
 
-
+// port
 const HTTP_PORT = 8000
 app.listen(HTTP_PORT, () => {
   console.log("Server is listening on port " + HTTP_PORT);

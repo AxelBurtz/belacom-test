@@ -13,6 +13,10 @@
   margin: 5px;
 }
 
+.customer_information {
+  width: 300px;
+}
+
 .information input {
   width: 250px;
   height: 50px;
@@ -20,14 +24,49 @@
   padding-left: 10px;
 }
 
-.information button {
+.update_information {
+  width: 50%;
+}
+
+.update_information input {
+  width: 200px;
+  height: 20px;
+  margin-bottom: 5px;
+}
+
+button {
   width: 250px;
   height: 50px;
   margin-top: 50px;
 }
 
-.information button:hover {
+button:hover {
   cursor: pointer;
   color: white;
   background-color: black;
+}
+
+.customers {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.customer {
+  width: 500px;
+  height: auto;
+  border: 1px solid black;
+  margin: 10px;
+  display: flex;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.customer h3 {
+  margin: 10px;
+}
+
+.customer p {
+  margin: 10px;
 }

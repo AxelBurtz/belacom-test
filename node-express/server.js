@@ -3,7 +3,9 @@ const express = require("express");
 var app = express();
 const cors = require("cors");
 
+// add to connect the server with the client
 app.use(cors());
+// add to translate the json in the front
 app.use(express.json());
 
 // create db
@@ -56,12 +58,10 @@ app.get("/customers", (req, res, next) => {
 
 // method create
 app.post("/create/", (req, res, next) => {
-
-  const last_name = req.body.last_name
-  const first_name = req.body.first_name
-  const title = req.body.title
-  const age = req.body.age
-
+  // const last_name = req.body.last_name
+  // const first_name = req.body.first_name
+  // const title = req.body.title
+  // const age = req.body.age
   db.run("INSERT INTO customers (last_name, first_name, title, age) VALUES (?,?,?,?)",
     [req.body.last_name, req.body.first_name, req.body.title, req.body.age],
     function (err, result) {
@@ -76,10 +76,9 @@ app.post("/create/", (req, res, next) => {
 });
 
 // method update
-app.patch("/customers/", (req, res, next) => {
-  var reqBody = req.body;
-  db.run(`UPDATE customers set last_name = ?, first_name = ?, title = ?, age = ? WHERE customer_id = ?`,
-    [reqBody.last_name, reqBody.first_name, reqBody.title, reqBody.age, reqBody.customer_id],
+app.patch("/update", (req, res, next) => {
+  db.run(`UPDATE customers SET last_name = ?, first_name = ?, title = ?, age = ? WHERE customer_id = ?`,
+    [req.body.last_name, req.body.first_name, req.body.title, req.body.age, req.body.customer_id],
     function (err, result) {
       if (err) {
         res.status(400).json({ "error": res.message })
@@ -90,9 +89,10 @@ app.patch("/customers/", (req, res, next) => {
 });
 
 // method delete
-app.delete("/customers/:id", (req, res, next) => {
-  db.run(`DELETE FROM user WHERE id = ?`,
-    req.params.id,
+app.delete("/delete/:id", (req, res, next) => {
+  const id = req.params.id
+  db.run(`DELETE FROM customers WHERE id = ?`,
+    id,
     function (err, result) {
       if (err) {
         res.status(400).json({ "error": res.message })

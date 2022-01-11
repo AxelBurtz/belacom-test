@@ -47,7 +47,11 @@ function App() {
   };
 
   const deleteCustomer = (id) => {
-    Axios.delete(`http://localhost:8000/delete/${id}`);
+    Axios.delete(`http://localhost:8000/delete/${id}`).then((reponse) => {
+      setCustomersList(customersList.filter((val)=> {
+        return val.id !== id
+      }))
+    })
   };
 
   return (

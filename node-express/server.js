@@ -15,7 +15,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
   } else {
 
     db.run('CREATE TABLE customers( \
-            customer_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             last_name NVARCHAR(20)  NOT NULL,\
             first_name NVARCHAR(20)  NOT NULL,\
             title NVARCHAR(20),\
@@ -36,7 +36,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 // method show
 app.get("/customers/:id", (req, res, next) => {
   var params = [req.params.id]
-  db.get("SELECT * FROM customers where customer_id = ?", [req.params.id], (err, row) => {
+  db.get("SELECT * FROM customers where id = ?", [req.params.id], (err, row) => {
     if (err) {
       res.status(400).json({ "error": err.message });
       return;
@@ -58,10 +58,6 @@ app.get("/customers", (req, res, next) => {
 
 // method create
 app.post("/create/", (req, res, next) => {
-  // const last_name = req.body.last_name
-  // const first_name = req.body.first_name
-  // const title = req.body.title
-  // const age = req.body.age
   db.run("INSERT INTO customers (last_name, first_name, title, age) VALUES (?,?,?,?)",
     [req.body.last_name, req.body.first_name, req.body.title, req.body.age],
     function (err, result) {
@@ -70,15 +66,15 @@ app.post("/create/", (req, res, next) => {
         return;
       }
       res.status(201).json({
-        "customer_id": this.lastID
+        "id": this.lastID
       })
     });
 });
 
 // method update
 app.patch("/update", (req, res, next) => {
-  db.run(`UPDATE customers SET last_name = ?, first_name = ?, title = ?, age = ? WHERE customer_id = ?`,
-    [req.body.last_name, req.body.first_name, req.body.title, req.body.age, req.body.customer_id],
+  db.run(`UPDATE customers SET last_name = ?, first_name = ?, title = ?, age = ? WHERE id = ?`,
+    [req.body.last_name, req.body.first_name, req.body.title, req.body.age, req.body.id],
     function (err, result) {
       if (err) {
         res.status(400).json({ "error": res.message })
